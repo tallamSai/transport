@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Authenticated read allows farmers/drivers to see each other's name/phone on active trips.
+     * Tighten to role-based rules if you need stricter privacy.
+     */
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /vehicles/{vehicleId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && request.resource.data.driverId == request.auth.uid;
+      allow delete: if request.auth != null
+        && resource.data.driverId == request.auth.uid;
+    }
+
+    match /requests/{requestId} {
+      allow read: if request.auth != null && (
+        resource.data.farmerId == request.auth.uid ||
+        resource.data.assignedDriverId == request.auth.uid
+      );
+      allow create: if request.auth != null
+        && request.resource.data.farmerId == request.auth.uid;
+      allow update: if request.auth != null && (
+        resource.data.farmerId == request.auth.uid ||
+        resource.data.assignedDriverId == request.auth.uid
+      );
+    }
+
+    /** Mandi list: optional Cloud data; app falls back to bundled defaults if empty. */
+    match /mandis/{mandiId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+  }
+}
