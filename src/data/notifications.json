@@ -1,0 +1,37 @@
+[
+  {
+    "id": "n1",
+    "title": "Vehicle Assigned",
+    "message": "Your transport has been assigned. Tractor A is on the way.",
+    "time": "10:00 AM",
+    "type": "assigned"
+  },
+  {
+    "id": "n2",
+    "title": "Driver Arrived",
+    "message": "Driver Ramesh Kumar has arrived at your farm for pickup.",
+    "time": "10:15 AM",
+    "type": "arrived"
+  },
+  {
+    "id": "n3",
+    "title": "Delivery Started",
+    "message": "Pickup completed. Your crop is now en route to City Mandi.",
+    "time": "10:30 AM",
+    "type": "started"
+  },
+  {
+    "id": "n4",
+    "title": "Delivery Completed",
+    "message": "Your tomato crop has been delivered successfully to City Mandi.",
+    "time": "11:00 AM",
+    "type": "completed"
+  },
+  {
+    "id": "n5",
+    "title": "Priority Alert",
+    "message": "Perishable crop — delivery scheduled before 6:00 PM.",
+    "time": "9:45 AM",
+    "type": "info"
+  }
+]

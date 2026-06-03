@@ -1,0 +1,30 @@
+[
+  {
+    "id": "r1",
+    "name": "Best Route",
+    "farmerLocation": "Rampur Village",
+    "destinationMandi": "City Mandi",
+    "distance": "28 km",
+    "estimatedTime": "55 mins",
+    "fuelCost": "₹420",
+    "transportCost": "₹1,200",
+    "isBest": true,
+    "pickupTime": "10:00 AM",
+    "deliveryTime": "10:55 AM",
+    "arrivalTime": "10:55 AM"
+  },
+  {
+    "id": "r2",
+    "name": "Alternative Route",
+    "farmerLocation": "Rampur Village",
+    "destinationMandi": "City Mandi",
+    "distance": "34 km",
+    "estimatedTime": "68 mins",
+    "fuelCost": "₹510",
+    "transportCost": "₹1,050",
+    "isBest": false,
+    "pickupTime": "10:00 AM",
+    "deliveryTime": "11:08 AM",
+    "arrivalTime": "11:08 AM"
+  }
+]

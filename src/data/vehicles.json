@@ -1,0 +1,62 @@
+[
+  {
+    "id": "v1",
+    "name": "Tractor A",
+    "type": "Tractor",
+    "number": "RJ-14-AB-4521",
+    "capacity": "60 Quintal",
+    "location": "Rampur Village",
+    "distance": "2 km",
+    "status": "available",
+    "driverName": "Ramesh Kumar",
+    "image": "tractor"
+  },
+  {
+    "id": "v2",
+    "name": "Truck B",
+    "type": "Truck",
+    "number": "RJ-14-CD-8832",
+    "capacity": "120 Quintal",
+    "location": "Sikar Highway",
+    "distance": "4 km",
+    "status": "available",
+    "driverName": "Suresh Meena",
+    "image": "truck"
+  },
+  {
+    "id": "v3",
+    "name": "Tractor C",
+    "type": "Tractor",
+    "number": "RJ-14-EF-2210",
+    "capacity": "55 Quintal",
+    "location": "Green Fields",
+    "distance": "5 km",
+    "status": "busy",
+    "driverName": "Vikram Singh",
+    "image": "tractor"
+  },
+  {
+    "id": "v4",
+    "name": "Mini Truck D",
+    "type": "Mini Truck",
+    "number": "RJ-14-GH-9901",
+    "capacity": "35 Quintal",
+    "location": "City Mandi Road",
+    "distance": "3 km",
+    "status": "available",
+    "driverName": "Anil Sharma",
+    "image": "mini"
+  },
+  {
+    "id": "v5",
+    "name": "Truck E",
+    "type": "Truck",
+    "number": "RJ-14-IJ-3344",
+    "capacity": "100 Quintal",
+    "location": "NH-52 Junction",
+    "distance": "8 km",
+    "status": "offline",
+    "driverName": "Mahesh Yadav",
+    "image": "truck"
+  }
+]

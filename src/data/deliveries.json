@@ -1,0 +1,44 @@
+[
+  {
+    "id": "d1",
+    "cropType": "Tomato",
+    "quantity": "50 Quintal",
+    "pickup": "Rampur Village",
+    "destination": "City Mandi",
+    "status": "on_route",
+    "driverName": "Ramesh Kumar",
+    "vehicleName": "Tractor A",
+    "vehicleType": "Tractor",
+    "eta": "25 mins",
+    "phone": "+91 98765 11122",
+    "createdAt": "2026-06-03T08:00:00"
+  },
+  {
+    "id": "d2",
+    "cropType": "Onion",
+    "quantity": "30 Quintal",
+    "pickup": "Green Fields",
+    "destination": "Wholesale Mandi",
+    "status": "vehicle_assigned",
+    "driverName": "Suresh Meena",
+    "vehicleName": "Truck B",
+    "vehicleType": "Truck",
+    "eta": "45 mins",
+    "phone": "+91 91234 33344",
+    "createdAt": "2026-06-03T09:30:00"
+  },
+  {
+    "id": "d3",
+    "cropType": "Potato",
+    "quantity": "70 Quintal",
+    "pickup": "Bijapur Farm",
+    "destination": "Regional Mandi",
+    "status": "delivered",
+    "driverName": "Anil Sharma",
+    "vehicleName": "Mini Truck D",
+    "vehicleType": "Mini Truck",
+    "eta": "—",
+    "phone": "+91 99887 66554",
+    "createdAt": "2026-06-02T14:00:00"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "f1",
+    "name": "Rajesh Patel",
+    "phone": "+91 98765 43210",
+    "village": "Rampur",
+    "cropType": "Tomato",
+    "cropQuantity": "50 Quintal",
+    "pickupLocation": "Rampur Village, Block A"
+  },
+  {
+    "id": "f2",
+    "name": "Sunita Devi",
+    "phone": "+91 91234 56789",
+    "village": "Bijapur",
+    "cropType": "Wheat",
+    "cropQuantity": "80 Quintal",
+    "pickupLocation": "Bijapur Farm Road"
+  }
+]
