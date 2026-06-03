@@ -14,16 +14,20 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.farmlift.app',
+      config: {
+        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY || '',
+      },
     },
     android: {
-      adaptiveIcon: {
-        backgroundColor: '#2E7D32',
-      },
+      adaptiveIcon: { backgroundColor: '#2E7D32' },
       package: 'com.farmlift.app',
+      config: {
+        googleMaps: {
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY || '',
+        },
+      },
     },
-    web: {
-      bundler: 'metro',
-    },
+    web: { bundler: 'metro' },
     plugins: ['expo-font'],
   },
 };

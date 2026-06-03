@@ -1,52 +1,30 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { ScreenLayout, CustomInput, CustomButton, Header, SuccessModal } from '../components';
-import { colors, radius, shadows, spacing, typography } from '../constants/theme';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Assets } from '../constants/assets';
+import { colors, spacing } from '../constants/theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'FarmerRegistration'>;
 
 export function FarmerRegistrationScreen({ navigation }: Props) {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [village, setVillage] = useState('');
-  const [cropType, setCropType] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [pickup, setPickup] = useState('');
-  const [success, setSuccess] = useState(false);
-
-  function submit() {
-    setSuccess(true);
-  }
-
   return (
-    <ScreenLayout>
-      <Header title="Farmer Registration" subtitle="Phase 1 — Data Collection" onBack={() => navigation.goBack()} />
-      <View style={[styles.card, shadows.card]}>
-        <Text style={styles.phase}>Register your farm details for transport matching</Text>
-        <CustomInput label="Farmer Name" value={name} onChangeText={setName} placeholder="Rajesh Patel" />
-        <CustomInput label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+91 98765 43210" keyboardType="phone-pad" />
-        <CustomInput label="Village" value={village} onChangeText={setVillage} placeholder="Rampur" />
-        <CustomInput label="Crop Type" value={cropType} onChangeText={setCropType} placeholder="Tomato" />
-        <CustomInput label="Crop Quantity" value={quantity} onChangeText={setQuantity} placeholder="50 Quintal" />
-        <CustomInput label="Pickup Location" value={pickup} onChangeText={setPickup} placeholder="Rampur Village, Block A" />
-        <CustomButton title="Submit" onPress={submit} />
+    <ImageBackground source={Assets.loginBg} style={styles.bg}>
+      <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+      <View style={styles.box}>
+        <Text style={styles.title}>Farmer Registration</Text>
+        <Text style={styles.sub}>Phase 1 — UI mockup screen (form coming soon)</Text>
       </View>
-      <SuccessModal
-        visible={success}
-        title="Registration Successful!"
-        message="Farmer profile saved locally. You can now request transport matching."
-        onClose={() => {
-          setSuccess(false);
-          navigation.goBack();
-        }}
-      />
-    </ScreenLayout>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg },
-  phase: { ...typography.caption, color: colors.textSecondary, marginBottom: spacing.lg },
+  bg: { flex: 1, justifyContent: 'flex-end' },
+  back: { position: 'absolute', top: 48, left: spacing.md, zIndex: 2 },
+  box: { backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.lg },
+  title: { fontSize: 20, fontWeight: '700', color: colors.textNavy },
+  sub: { marginTop: 8, color: colors.textMuted },
 });

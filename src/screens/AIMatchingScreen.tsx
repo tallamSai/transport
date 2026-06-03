@@ -1,126 +1,155 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { FadeInView } from '../utils/animations';
-import {
-  ScreenLayout,
-  AIAnalysisCard,
-  PriorityBadge,
-  SectionTitle,
-  CustomButton,
-} from '../components';
-import { bestMatch, matchInput, matchingSteps } from '../data';
-import { colors, radius, shadows, spacing, typography } from '../constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Assets } from '../constants/assets';
+import { colors, radius, spacing, shadow } from '../constants/theme';
+
+const steps = ['Analyzing Capacity', 'Checking Distance', 'Evaluating Priority', 'Generating Match'];
 
 export function AIMatchingScreen() {
-  const [activeStep, setActiveStep] = useState(-1);
-  const [loading, setLoading] = useState(false);
-  const [matched, setMatched] = useState(false);
-
-  function runMatching() {
-    setMatched(false);
-    setLoading(true);
-    setActiveStep(0);
-    let step = 0;
-    const interval = setInterval(() => {
-      step += 1;
-      if (step >= matchingSteps.length) {
-        clearInterval(interval);
-        setLoading(false);
-        setMatched(true);
-        return;
-      }
-      setActiveStep(step);
-    }, 800);
-  }
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
-    runMatching();
+    let i = 0;
+    const t = setInterval(() => {
+      i += 1;
+      if (i >= steps.length) {
+        clearInterval(t);
+        setActive(steps.length);
+        return;
+      }
+      setActive(i);
+    }, 900);
+    return () => clearInterval(t);
   }, []);
 
-  const inputs = [
-    { icon: 'cube' as const, label: 'Crop Quantity', value: matchInput.cropQuantity },
-    { icon: 'location' as const, label: 'Pickup Location', value: matchInput.pickupLocation },
-    { icon: 'storefront' as const, label: 'Destination Mandi', value: matchInput.destinationMandi },
-    { icon: 'flash' as const, label: 'Urgency', value: matchInput.urgency },
-  ];
-
   return (
-    <ScreenLayout>
-      <SectionTitle title="AI-Based Matching" subtitle="Phase 3 — Smart capacity & priority" />
-
-      <View style={[styles.inputCard, shadows.card]}>
-        <Text style={styles.cardTitle}>Input Summary</Text>
-        {inputs.map((item) => (
-          <View key={item.label} style={styles.inputRow}>
-            <Ionicons name={item.icon} size={20} color={colors.primary} />
-            <View>
-              <Text style={styles.inputLabel}>{item.label}</Text>
-              <Text style={styles.inputValue}>{item.value}</Text>
-            </View>
-          </View>
-        ))}
+    <View style={styles.root}>
+      <LinearGradient colors={['#0A1628', '#0D2137', '#122A44']} style={StyleSheet.absoluteFill} />
+      <View style={styles.circuit}>
+        <Ionicons name="hardware-chip" size={80} color="rgba(100,181,246,0.35)" />
       </View>
+      <SafeAreaView style={styles.safe}>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+          <Text style={styles.engineTitle}>AI Matching Engine</Text>
 
-      <AIAnalysisCard steps={matchingSteps} activeStep={matched ? matchingSteps.length - 1 : activeStep} loading={loading} />
-
-      {!loading && matched ? (
-        <FadeInView slideFrom={24}>
-          <View style={[styles.successCard, shadows.card]}>
-            <Ionicons name="checkmark-circle" size={32} color={colors.success} />
-            <Text style={styles.successTitle}>Best Vehicle Found!</Text>
-            <Text style={styles.successSub}>{bestMatch.vehicleName} · Score {bestMatch.score}%</Text>
+          <View style={styles.stepsBox}>
+            {steps.map((label, i) => {
+              const done = i < active;
+              const current = i === active && active < steps.length;
+              return (
+                <View key={label} style={styles.stepRow}>
+                  <Ionicons
+                    name={done ? 'checkmark-circle' : 'ellipse-outline'}
+                    size={22}
+                    color={done ? colors.secondary : '#fff'}
+                  />
+                  <Text style={styles.stepText}>{label}</Text>
+                  <Ionicons
+                    name={done ? 'checkmark-circle' : current ? 'sync' : 'ellipse-outline'}
+                    size={22}
+                    color={done ? colors.secondary : current ? '#64B5F6' : 'rgba(255,255,255,0.4)'}
+                  />
+                </View>
+              );
+            })}
           </View>
 
-          <View style={[styles.matchCard, shadows.card]}>
-            <Text style={styles.matchTitle}>{bestMatch.vehicleName}</Text>
-            <MatchRow label="Distance" value={bestMatch.distance} />
-            <MatchRow label="Capacity" value={bestMatch.capacity} />
-            <MatchRow label="ETA" value={bestMatch.eta} />
-            <MatchRow label="Matching Score" value={`${bestMatch.score}%`} />
-          </View>
+          {active >= steps.length ? (
+            <>
+              <View style={styles.bestWrap}>
+                <View style={styles.bestBadge}>
+                  <Text style={styles.bestBadgeText}>Best Match Found!</Text>
+                </View>
+                <View style={[styles.bestCard, shadow.card]}>
+                  <Image source={Assets.tractor1} style={styles.tractorImg} resizeMode="contain" />
+                  <View style={styles.bestInfo}>
+                    <Text style={styles.bestName}>Tractor 1</Text>
+                    <Text style={styles.bestLine}>Capacity: 60 Quintal</Text>
+                    <Text style={styles.bestLine}>Distance: 2.1 km</Text>
+                    <Text style={styles.bestLine}>ETA: 25 mins</Text>
+                  </View>
+                  <Ionicons name="checkmark-circle" size={36} color={colors.secondary} />
+                </View>
+              </View>
 
-          <PriorityBadge
-            priority={bestMatch.priority}
-            note={`Perishable crop — ${bestMatch.cropType}. Delivery before 6:00 PM.`}
-          />
-        </FadeInView>
-      ) : null}
-
-      <CustomButton title="Run Matching Again" onPress={runMatching} variant="outline" style={{ marginTop: spacing.md }} />
-    </ScreenLayout>
-  );
-}
-
-function MatchRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.matchRow}>
-      <Text style={styles.matchLabel}>{label}</Text>
-      <Text style={styles.matchValue}>{value}</Text>
+              <View style={styles.priorityCard}>
+                <Image source={Assets.tomato} style={styles.tomatoImg} resizeMode="contain" />
+                <View style={styles.priorityInfo}>
+                  <Text style={styles.priorityHigh}>Priority: HIGH</Text>
+                  <Text style={styles.prioritySub}>Perishable Crop - Tomato</Text>
+                  <Text style={styles.prioritySub}>Delivery Before 6:00 PM</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={22} color={colors.textMuted} />
+              </View>
+            </>
+          ) : null}
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  inputCard: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.md },
-  cardTitle: { ...typography.h3, color: colors.textPrimary, marginBottom: spacing.md },
-  inputRow: { flexDirection: 'row', gap: spacing.md, marginBottom: spacing.sm, alignItems: 'center' },
-  inputLabel: { ...typography.caption, color: colors.textSecondary },
-  inputValue: { ...typography.body, color: colors.textPrimary, fontWeight: '600' },
-  successCard: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    alignItems: 'center',
-    marginBottom: spacing.md,
-    borderWidth: 2,
-    borderColor: colors.success,
+  root: { flex: 1 },
+  circuit: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', opacity: 0.5 },
+  safe: { flex: 1 },
+  scroll: { padding: spacing.lg, paddingBottom: 40 },
+  engineTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.secondary,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+    marginTop: spacing.sm,
   },
-  successTitle: { ...typography.h2, color: colors.primary, marginTop: spacing.sm },
-  successSub: { ...typography.caption, color: colors.textSecondary },
-  matchCard: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, marginBottom: spacing.md },
-  matchTitle: { ...typography.h2, color: colors.primary, marginBottom: spacing.md },
-  matchRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.xs },
-  matchLabel: { ...typography.body, color: colors.textSecondary },
-  matchValue: { ...typography.h3, color: colors.textPrimary },
+  stepsBox: { marginBottom: spacing.lg },
+  stepRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  stepText: { flex: 1, color: '#fff', fontSize: 15, textAlign: 'center', fontWeight: '500' },
+  bestWrap: { marginTop: spacing.md },
+  bestBadge: {
+    alignSelf: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: radius.pill,
+    marginBottom: -14,
+    zIndex: 2,
+  },
+  bestBadgeText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  bestCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    borderWidth: 3,
+    borderColor: colors.secondary,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  tractorImg: { width: 90, height: 70 },
+  bestInfo: { flex: 1 },
+  bestName: { fontSize: 18, fontWeight: '700', color: colors.text },
+  bestLine: { fontSize: 13, color: colors.textMuted, marginTop: 2 },
+  priorityCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.priorityBg,
+    borderWidth: 1,
+    borderColor: colors.priorityBorder,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginTop: spacing.lg,
+  },
+  tomatoImg: { width: 64, height: 64 },
+  priorityInfo: { flex: 1, paddingHorizontal: spacing.sm },
+  priorityHigh: { fontSize: 15, fontWeight: '700', color: colors.danger },
+  prioritySub: { fontSize: 13, color: colors.text, marginTop: 2 },
 });

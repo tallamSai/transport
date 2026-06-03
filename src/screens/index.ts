@@ -1,7 +1,6 @@
 export { SplashScreen } from './SplashScreen';
+export { LoginScreen } from './LoginScreen';
 export { HomeDashboardScreen } from './HomeDashboardScreen';
-export { FarmerRegistrationScreen } from './FarmerRegistrationScreen';
-export { TransportProviderRegistrationScreen } from './TransportProviderRegistrationScreen';
 export { VehicleDetectionScreen } from './VehicleDetectionScreen';
 export { VehicleListScreen } from './VehicleListScreen';
 export { AIMatchingScreen } from './AIMatchingScreen';
@@ -9,3 +8,5 @@ export { RouteOptimizationScreen } from './RouteOptimizationScreen';
 export { NotificationMonitoringScreen } from './NotificationMonitoringScreen';
 export { DeliveryTrackingScreen } from './DeliveryTrackingScreen';
 export { ProfileScreen } from './ProfileScreen';
+export { FarmerRegistrationScreen } from './FarmerRegistrationScreen';
+export { TransportProviderRegistrationScreen } from './TransportProviderRegistrationScreen';

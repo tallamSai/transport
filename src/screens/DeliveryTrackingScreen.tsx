@@ -1,124 +1,135 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenLayout, SectionTitle, Header } from '../components';
-import { deliveries } from '../data';
-import type { DeliveryStatus } from '../types';
-import { colors, radius, shadows, spacing, typography } from '../constants/theme';
+import { Assets } from '../constants/assets';
+import { colors, radius, spacing, shadow } from '../constants/theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'DeliveryTracking'>;
 
-const steps: { key: DeliveryStatus; label: string }[] = [
-  { key: 'request_created', label: 'Request Created' },
-  { key: 'vehicle_assigned', label: 'Vehicle Assigned' },
-  { key: 'pickup_completed', label: 'Pickup Completed' },
-  { key: 'on_route', label: 'On Route' },
-  { key: 'delivered', label: 'Delivered' },
+const timeline = [
+  { label: 'Request Created', time: '10:00 AM', done: true },
+  { label: 'Vehicle Assigned', time: '10:05 AM', done: true },
+  { label: 'Pickup Completed', time: '10:30 AM', done: true },
+  { label: 'On Route', time: '10:35 AM', done: true, active: true },
+  { label: 'Delivered', time: '11:00 AM', done: false },
 ];
 
-const statusOrder: DeliveryStatus[] = steps.map((s) => s.key);
-
 export function DeliveryTrackingScreen({ navigation }: Props) {
-  const delivery = deliveries[0];
-  const currentIndex = statusOrder.indexOf(delivery.status);
-
   return (
-    <ScreenLayout>
-      <Header title="Delivery Tracking" onBack={() => navigation.goBack()} />
-      <SectionTitle title="Shipment Status" subtitle={`${delivery.cropType} · ${delivery.quantity}`} />
+    <ScrollView style={styles.root} contentContainerStyle={styles.scroll}>
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={colors.textNavy} />
+        </TouchableOpacity>
+        <Text style={styles.screenTitle}>Delivery Tracking</Text>
+        <View style={{ width: 24 }} />
+      </View>
 
-      <View style={[styles.card, shadows.card]}>
-        {steps.map((step, i) => {
-          const done = i <= currentIndex;
-          const active = i === currentIndex;
-          return (
-            <View key={step.key} style={styles.step}>
-              <View style={[styles.circle, done && styles.circleDone, active && styles.circleActive]}>
-                <Ionicons
-                  name={done ? 'checkmark' : 'ellipse-outline'}
-                  size={18}
-                  color={done ? '#fff' : colors.textSecondary}
-                />
+      <View style={[styles.block, shadow.card]}>
+        <View style={styles.blockHead}>
+          <Text style={styles.blockHeadText}>Order ID: FL12345</Text>
+        </View>
+        <View style={styles.timeline}>
+          {timeline.map((step, i) => (
+            <View key={step.label} style={[styles.step, step.active && styles.stepActive]}>
+              <View style={styles.stepLeft}>
+                <View style={[styles.dot, step.done && styles.dotDone, !step.done && styles.dotPending]}>
+                  {step.done ? (
+                    <Ionicons name="checkmark" size={14} color="#fff" />
+                  ) : (
+                    <View style={styles.dotInner} />
+                  )}
+                </View>
+                {i < timeline.length - 1 ? <View style={[styles.line, step.done && styles.lineDone]} /> : null}
               </View>
               <View style={styles.stepBody}>
-                <Text style={[styles.stepLabel, done && styles.stepLabelDone]}>{step.label}</Text>
-                {active ? <Text style={styles.current}>Current stage</Text> : null}
+                <Text style={styles.stepLabel}>{step.label}</Text>
+                <Text style={styles.stepTime}>{step.time}</Text>
               </View>
-              {i < steps.length - 1 ? <View style={[styles.line, done && styles.lineDone]} /> : null}
             </View>
-          );
-        })}
+          ))}
+        </View>
       </View>
 
-      <SectionTitle title="Driver Details" />
-      <View style={[styles.driver, shadows.card]}>
-        <View style={styles.driverAvatar}>
-          <Ionicons name="person" size={28} color={colors.primary} />
+      <View style={[styles.block, shadow.card, { marginTop: spacing.md }]}>
+        <View style={styles.blockHead}>
+          <Text style={styles.blockHeadText}>Driver Details</Text>
         </View>
-        <View style={styles.driverInfo}>
-          <Text style={styles.driverName}>{delivery.driverName}</Text>
-          <Text style={styles.driverMeta}>{delivery.vehicleName} · {delivery.vehicleType}</Text>
-          <Text style={styles.driverPhone}>{delivery.phone}</Text>
+        <View style={styles.driverRow}>
+          <Image source={Assets.loginBg} style={styles.driverPhoto} resizeMode="cover" />
+          <View style={styles.driverInfo}>
+            <Text style={styles.driverName}>Ramesh Kumar</Text>
+            <Text style={styles.driverMeta}>Tractor 1</Text>
+            <Text style={styles.driverMeta}>UP 12 AB 3456</Text>
+          </View>
         </View>
-        <View style={styles.eta}>
-          <Text style={styles.etaLabel}>ETA</Text>
-          <Text style={styles.etaValue}>{delivery.eta}</Text>
+        <View style={styles.etaBar}>
+          <Text style={styles.etaText}>ETA: 20 mins</Text>
+          <View style={styles.etaActions}>
+            <TouchableOpacity style={styles.circleBtn}>
+              <Ionicons name="call" size={20} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.circleBtn}>
+              <Ionicons name="mail" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </ScreenLayout>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg },
-  step: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.lg, position: 'relative' },
-  circle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 2,
-    borderColor: colors.border,
+  root: { flex: 1, backgroundColor: colors.background },
+  scroll: { padding: spacing.md, paddingBottom: 40 },
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
+  screenTitle: { fontSize: 18, fontWeight: '700', color: colors.textNavy },
+  block: { borderRadius: radius.lg, overflow: 'hidden', backgroundColor: colors.surface },
+  blockHead: { backgroundColor: colors.primary, padding: spacing.md },
+  blockHeadText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  timeline: { padding: spacing.md },
+  step: { flexDirection: 'row', minHeight: 52 },
+  stepActive: { backgroundColor: colors.lightGreen, marginHorizontal: -spacing.md, paddingHorizontal: spacing.md, borderRadius: radius.sm },
+  stepLeft: { alignItems: 'center', width: 32 },
+  dot: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
   },
-  circleDone: { backgroundColor: colors.success, borderColor: colors.success },
-  circleActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  stepBody: { flex: 1 },
-  stepLabel: { ...typography.body, color: colors.textSecondary },
-  stepLabelDone: { color: colors.textPrimary, fontWeight: '600' },
-  current: { ...typography.label, color: colors.primary, marginTop: 2 },
-  line: {
-    position: 'absolute',
-    left: 17,
-    top: 36,
-    width: 2,
-    height: 28,
-    backgroundColor: colors.border,
-  },
-  lineDone: { backgroundColor: colors.success },
-  driver: {
+  dotDone: { backgroundColor: colors.secondary },
+  dotPending: { backgroundColor: '#E0E0E0' },
+  dotInner: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#fff' },
+  line: { width: 2, flex: 1, backgroundColor: '#E0E0E0', minHeight: 20 },
+  lineDone: { backgroundColor: colors.secondary },
+  stepBody: { flex: 1, paddingLeft: spacing.md, paddingBottom: spacing.sm },
+  stepLabel: { fontSize: 15, fontWeight: '600', color: colors.text },
+  stepTime: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
+  driverRow: { flexDirection: 'row', padding: spacing.md, alignItems: 'center' },
+  driverPhoto: { width: 64, height: 64, borderRadius: 32 },
+  driverInfo: { marginLeft: spacing.md },
+  driverName: { fontSize: 17, fontWeight: '700', color: colors.text },
+  driverMeta: { fontSize: 13, color: colors.textMuted, marginTop: 2 },
+  etaBar: {
     flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
     alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.lightGreen,
+    margin: spacing.md,
+    marginTop: 0,
+    padding: spacing.md,
+    borderRadius: radius.lg,
   },
-  driverAvatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryLight,
+  etaText: { fontSize: 16, fontWeight: '700', color: colors.primary },
+  etaActions: { flexDirection: 'row', gap: spacing.sm },
+  circleBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
   },
-  driverInfo: { flex: 1 },
-  driverName: { ...typography.h3, color: colors.textPrimary },
-  driverMeta: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
-  driverPhone: { ...typography.label, color: colors.primary, marginTop: 4 },
-  eta: { alignItems: 'center', backgroundColor: colors.primaryLight, padding: spacing.md, borderRadius: radius.md },
-  etaLabel: { ...typography.label, color: colors.textSecondary },
-  etaValue: { ...typography.h2, color: colors.primary, fontSize: 18 },
 });

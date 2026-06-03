@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenLayout, SectionTitle, CustomButton } from '../components';
-import { farmers, deliveries } from '../data';
-import { colors, radius, shadows, spacing, typography } from '../constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Assets } from '../constants/assets';
+import { colors, radius, spacing, shadow } from '../constants/theme';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -13,131 +13,93 @@ type Props = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
-const farmer = farmers[0];
-const completedCount = deliveries.filter((d) => d.status === 'delivered').length;
+const menu = [
+  { icon: 'person-outline' as const, label: 'Personal Details' },
+  { icon: 'bus-outline' as const, label: 'Transport History' },
+  { icon: 'cube-outline' as const, label: 'Completed Deliveries' },
+  { icon: 'settings-outline' as const, label: 'Settings' },
+  { icon: 'help-circle-outline' as const, label: 'Help & Support' },
+];
 
 export function ProfileScreen({ navigation }: Props) {
   return (
-    <ScreenLayout>
-      <View style={styles.profileHeader}>
-        <View style={styles.avatar}>
-          <Ionicons name="person" size={40} color="#fff" />
+    <View style={styles.root}>
+      <SafeAreaView edges={['top']} style={styles.headBg}>
+        <View style={styles.head}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Text style={styles.headTitle}>My Profile</Text>
+          <Ionicons name="ellipse-outline" size={24} color="#fff" />
         </View>
-        <Text style={styles.name}>{farmer.name}</Text>
-        <Text style={styles.role}>Farmer · {farmer.village}</Text>
-      </View>
+      </SafeAreaView>
 
-      <SectionTitle title="Personal Details" />
-      <InfoCard icon="call" label="Phone" value={farmer.phone} />
-      <InfoCard icon="leaf" label="Primary Crop" value={farmer.cropType} />
-      <InfoCard icon="location" label="Pickup" value={farmer.pickupLocation} />
-
-      <SectionTitle title="Transport History" />
-      {deliveries.map((d) => (
-        <View key={d.id} style={[styles.history, shadows.card]}>
-          <Text style={styles.historyTitle}>{d.cropType} → {d.destination}</Text>
-          <Text style={styles.historySub}>{d.vehicleName} · {d.status.replace('_', ' ')}</Text>
+      <ScrollView style={styles.card} contentContainerStyle={styles.scroll}>
+        <View style={styles.profileRow}>
+          <Image source={Assets.loginBg} style={styles.avatar} resizeMode="cover" />
+          <View>
+            <Text style={styles.name}>Ramesh Kumar</Text>
+            <Text style={styles.meta}>Farmer</Text>
+            <Text style={styles.meta}>Rampur Village, UP, India</Text>
+          </View>
         </View>
-      ))}
 
-      <SectionTitle title="Completed Deliveries" />
-      <View style={[styles.completed, shadows.card]}>
-        <Text style={styles.completedNum}>{completedCount}</Text>
-        <Text style={styles.completedLabel}>Total completed trips</Text>
-      </View>
+        {menu.map((m) => (
+          <TouchableOpacity key={m.label} style={styles.menuRow}>
+            <Ionicons name={m.icon} size={22} color={colors.primary} />
+            <Text style={styles.menuLabel}>{m.label}</Text>
+            <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+          </TouchableOpacity>
+        ))}
 
-      <SectionTitle title="Settings" />
-      <SettingsRow icon="notifications-outline" label="Notifications" />
-      <SettingsRow icon="language-outline" label="Language" />
-      <SettingsRow icon="help-circle-outline" label="Help & Support" />
-
-      <CustomButton
-        title="Logout"
-        variant="outline"
-        onPress={() =>
-          navigation.getParent()?.reset({
-            index: 0,
-            routes: [{ name: 'Splash' }],
-          })
-        }
-        style={{ marginTop: spacing.lg }}
-      />
-    </ScreenLayout>
-  );
-}
-
-function InfoCard({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string }) {
-  return (
-    <View style={[styles.info, shadows.card]}>
-      <Ionicons name={icon} size={22} color={colors.primary} />
-      <View style={styles.infoBody}>
-        <Text style={styles.infoLabel}>{label}</Text>
-        <Text style={styles.infoValue}>{value}</Text>
-      </View>
+        <TouchableOpacity
+          style={styles.logout}
+          onPress={() => navigation.getParent()?.reset({ index: 0, routes: [{ name: 'Login' }] })}
+        >
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
 
-function SettingsRow({ icon, label }: { icon: keyof typeof Ionicons.glyphMap; label: string }) {
-  return (
-    <Pressable style={[styles.settings, shadows.card]}>
-      <Ionicons name={icon} size={22} color={colors.primary} />
-      <Text style={styles.settingsLabel}>{label}</Text>
-      <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
-  profileHeader: { alignItems: 'center', marginBottom: spacing.xl },
-  avatar: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: colors.primary,
+  root: { flex: 1, backgroundColor: colors.background },
+  headBg: { backgroundColor: colors.primary },
+  head: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  headTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  card: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    marginTop: -4,
+  },
+  scroll: { padding: spacing.lg, paddingBottom: 40 },
+  profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg, gap: spacing.md },
+  avatar: { width: 72, height: 72, borderRadius: 36, borderWidth: 2, borderColor: colors.lightGreen },
+  name: { fontSize: 20, fontWeight: '700', color: colors.text },
+  meta: { fontSize: 14, color: colors.textMuted, marginTop: 2 },
+  menuRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    gap: spacing.md,
+  },
+  menuLabel: { flex: 1, fontSize: 16, color: colors.text },
+  logout: {
+    backgroundColor: colors.danger,
+    borderRadius: radius.pill,
+    height: 52,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.md,
+    marginTop: spacing.xl,
   },
-  name: { ...typography.h1, color: colors.textPrimary, fontSize: 24 },
-  role: { ...typography.caption, color: colors.textSecondary },
-  info: {
-    flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  infoBody: { flex: 1 },
-  infoLabel: { ...typography.caption, color: colors.textSecondary },
-  infoValue: { ...typography.body, color: colors.textPrimary, fontWeight: '600' },
-  history: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  historyTitle: { ...typography.h3, fontSize: 14, color: colors.textPrimary },
-  historySub: { ...typography.caption, color: colors.textSecondary, marginTop: 2, textTransform: 'capitalize' },
-  completed: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  completedNum: { ...typography.h1, color: colors.primary, fontSize: 40 },
-  completedLabel: { ...typography.caption, color: colors.textSecondary },
-  settings: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-    gap: spacing.md,
-  },
-  settingsLabel: { ...typography.body, flex: 1, color: colors.textPrimary },
+  logoutText: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });
